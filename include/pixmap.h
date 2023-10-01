@@ -105,12 +105,14 @@ extern _X_EXPORT void FreeScratchPixmapHeader(PixmapPtr /*pPixmap */ );
 
 extern _X_EXPORT Bool CreateScratchPixmapsForScreen(ScreenPtr /*pScreen */ );
 
-extern _X_EXPORT void FreeScratchPixmapsForScreen(ScreenPtr /*pScreen */ );
+extern _X_EXPORT Bool PixmapScreenInit(ScreenPtr /*pScreen */ );
 
 extern _X_EXPORT PixmapPtr AllocatePixmap(ScreenPtr /*pScreen */ ,
                                           int /*pixDataSize */ );
 
 extern _X_EXPORT void FreePixmap(PixmapPtr /*pPixmap */ );
+
+extern _X_EXPORT void FreeScratchPixmapsForScreen(ScreenPtr /*pScreen */ );
 
 extern _X_EXPORT PixmapPtr
 PixmapShareToSecondary(PixmapPtr pixmap, ScreenPtr secondary);
@@ -133,5 +135,10 @@ PixmapStopDirtyTracking(DrawablePtr src, PixmapPtr slave_dst);
    efficiently */
 extern _X_EXPORT Bool
 PixmapSyncDirtyHelper(PixmapDirtyUpdatePtr dirty);
+
+extern _X_EXPORT void
+PixmapDirtyCopyArea(PixmapPtr dst, DrawablePtr src,
+                    int x, int y, int dst_x, int dst_y,
+                    RegionPtr dirty_region);
 
 #endif                          /* PIXMAP_H */
