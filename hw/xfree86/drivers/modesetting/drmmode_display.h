@@ -135,6 +135,7 @@ typedef struct {
     Bool async_flip_secondaries;
     Bool dri2_enable;
     Bool present_enable;
+    Bool tearfree_enable;
 
     uint32_t vrr_prop_id;
     Bool use_ctm;
@@ -167,6 +168,20 @@ typedef struct {
 } drmmode_format_rec, *drmmode_format_ptr;
 
 typedef struct {
+    drmmode_bo bo;
+    uint32_t fb_id;
+    PixmapPtr px;
+    RegionRec dmg;
+} drmmode_shadow_fb_rec, *drmmode_shadow_fb_ptr;
+
+typedef struct {
+    drmmode_shadow_fb_rec buf[2];
+    struct xorg_list dri_flip_list;
+    uint32_t back_idx;
+    uint32_t flip_seq;
+} drmmode_tearfree_rec, *drmmode_tearfree_ptr;
+
+typedef struct {
     drmmode_ptr drmmode;
     drmModeCrtcPtr mode_crtc;
     uint32_t vblank_pipe;
@@ -184,10 +199,13 @@ typedef struct {
 
     drmmode_bo rotate_bo;
     unsigned rotate_fb_id;
+    drmmode_tearfree_rec tearfree;
 
     PixmapPtr prime_pixmap;
     PixmapPtr prime_pixmap_back;
     unsigned prime_pixmap_x;
+
+    int src_x, src_y;
 
     /**
      * @{ MSC (vblank count) handling for the PRESENT extension.
@@ -199,6 +217,8 @@ typedef struct {
     uint32_t msc_prev;
     uint64_t msc_high;
     /** @} */
+
+    uint64_t next_msc;
 
     Bool need_modeset;
     struct xorg_list mode_list;
@@ -308,8 +328,13 @@ void drmmode_get_default_bpp(ScrnInfoPtr pScrn, drmmode_ptr drmmmode,
                              int *depth, int *bpp);
 
 void drmmode_copy_fb(ScrnInfoPtr pScrn, drmmode_ptr drmmode);
+void drmmode_copy_damage(xf86CrtcPtr crtc, PixmapPtr dst, RegionPtr damage,
+                         Bool empty);
 
-int drmmode_crtc_flip(xf86CrtcPtr crtc, uint32_t fb_id, uint32_t flags, void *data);
+int drmmode_crtc_flip(xf86CrtcPtr crtc, uint32_t fb_id, int x, int y,
+                      uint32_t flags, void *data);
+
+Bool drmmode_crtc_get_fb_id(xf86CrtcPtr crtc, uint32_t *fb_id, int *x, int *y);
 
 void drmmode_set_dpms(ScrnInfoPtr scrn, int PowerManagementMode, int flags);
 void drmmode_crtc_set_vrr(xf86CrtcPtr crtc, Bool enabled);
