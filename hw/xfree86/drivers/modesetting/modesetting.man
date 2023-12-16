@@ -118,7 +118,7 @@ as rotated and scaled CRTCs. When PageFlip is enabled, fullscreen DRI
 applications will still have the discretion to not use tearing prevention.
 .br
 The default is
-.B off.
+.B on.
 .TP
 .SH "SEE ALSO"
 @xservername@(@appmansuffix@), @xconfigfile@(@filemansuffix@), Xserver(@appmansuffix@),
