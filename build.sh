@@ -5,7 +5,7 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
-dependecies=(
+dependencies=(
 	xorg-xkbcomp
 	xorg-setxkbmap
 	xf86-input-libinput
@@ -15,7 +15,7 @@ dependecies=(
 	libxcvt
 )
 
-pacman --noconfirm -S "${dependecies[@]}"
+pacman --noconfirm -S "${dependencies[@]}"
 
 arch-meson \
 	--buildtype=release \
