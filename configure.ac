@@ -1493,7 +1493,7 @@ CORE_INCS='-I$(top_srcdir)/include -I$(top_builddir)/include'
 
 # SHA1 hashing
 AC_ARG_WITH([sha1],
-            [AS_HELP_STRING([--with-sha1=libc|libmd|libnettle|libgcrypt|libcrypto|libsha1|CommonCrypto|CryptoAPI],
+            [AS_HELP_STRING([--with-sha1=libc|libmd|libnettle|nettlestatic|libgcrypt|libcrypto|libsha1|CommonCrypto|CryptoAPI],
                             [choose SHA1 implementation])])
 AC_CHECK_FUNC([SHA1Init], [HAVE_SHA1_IN_LIBC=yes])
 if test "x$with_sha1" = x && test "x$HAVE_SHA1_IN_LIBC" = xyes; then
@@ -1567,6 +1567,14 @@ if test "x$with_sha1" = xlibnettle; then
 	AC_DEFINE([HAVE_SHA1_IN_LIBNETTLE], [1],
 	          [Use libnettle SHA1 functions])
 	SHA1_LIBS=-lnettle
+fi
+if test "x$with_sha1" = xnettlestatic && test "x$HAVE_LIBNETTLE" != xyes; then
+	AC_MSG_ERROR([nettlestatic requested but libnettle not found])
+fi
+if test "x$with_sha1" = xnettlestatic; then
+	AC_DEFINE([HAVE_SHA1_IN_LIBNETTLE], [1],
+	          [Use static libnettle SHA1 functions])
+	SHA1_LIBS=-l:libnettle.a
 fi
 AC_CHECK_LIB([gcrypt], [gcry_md_open], [HAVE_LIBGCRYPT=yes])
 if test "x$with_sha1" = x && test "x$HAVE_LIBGCRYPT" = xyes; then
